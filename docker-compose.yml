@@ -18,8 +18,8 @@ services:
     ports:
       - "80:80"
     volumes:
-      #- .:/var/www:cached
       - .:/var/www
+      #- .:/var/www:cached
       #- ./html:/var/www/html
       #- ./App:/var/www/App
       #- ./vendor:/var/www/vendor

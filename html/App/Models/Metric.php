@@ -1,6 +1,7 @@
 <?php
     //namespace App\Models;
-    require_once "./configConn.php";
+    //require_once "./configConn.php";
+    require_once "../Config/Database.php";
 
     class Metric
     {

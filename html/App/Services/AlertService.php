@@ -2,28 +2,46 @@
     //namespace App\Services;
     //use App\Models\User;
 
-    require_once "./App/Models/Alert.php";
+    include_once "./App/Models/Alert.php";
+
 
 
     class AlertService
-    {
+    {   
+        
         public function get($id = null) 
-        {
-            echo ("<br>DEBUG AlertService id:<br>");
-            echo var_dump($id) . "<br>";
+        {   
+
             
             if ($id) {
-                return Alert::select($id);
+    
+                /* Instancia um objeto da classe Alert 
+                 * chama a função select do objeto instanciado
+                 * passando como parametro um id da tabela alert
+                 * retorna todos os registros em que o id for igual
+                 */
+                return (new Alert())->select($id); 
+                
             } else {
-                return Alert::selectAll();
+                //Retorna todos os registros da tabela alerts
+                return (new Alert())->selectAll();
             }
         }
 
+
         public function post() 
         {
-            $data = $_POST;
 
-            return Alert::insert($data);
+            //DEBUGING
+            return $_POST;
+            /* TODO: Utilizar o raw Post data 
+             * $data = json_decode(file_get_contents("php://input"));
+             */
+            // usando a variável global post
+            // $data = $_POST;
+
+            
+            // return (new Alert())->insert($data);
         }
 
         public function update() 

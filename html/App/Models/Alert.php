@@ -1,61 +1,84 @@
 <?php
     //namespace App\Models;
-    require_once $_SERVER['DOCUMENT_ROOT'] . "/configConn.php";
+
+    include_once "../Config/Database.php";
+    
 
     class Alert
     {
+        // Atributos com relação a base
+        private $conn;
+        private static $db_name = 'db_app';
         private static $table = 'alerts';
 
-        public static function select(int $id) {
-            echo ("<br>DEBUG Chegou na classe Alert metodo select id:<br>");
-            echo var_dump($id) . "<br>";
-            
-            try{
-                $connPdo = new PDO(strval(DBDRIVE.':host='.DBHOST.';dbname='.DBNAME),strval(DBUSER), strval(DBPASS));
+        // Propriedades dos alertas
+        public $id;
+        public $app_name;
+        public $title;
+        public $description;
+        public $enabled;
+        public $metric;
+        public $condition;
+        public $threshold;
+
+        public function __construct(){
+            // retorna uma conexão da da instância da classe DB
+            $this->conn = (new Database())->connect();
+        }
+
+        public function select(int $id) {
+
+            $sql = 'SELECT 
+                     `id`,
+                     `app_name`, 
+                     `title`,
+                     `description`,
+                     `enabled`,
+                     `metric`,
+                     `condition`,
+                     `threshold` 
+                     FROM `'
+                    . self::$db_name . '`.`' . self::$table . '` WHERE `id` = :id';
                 
-                echo "<br>Conectou ao banco! Alert<br>";
+            //Prepara a query    
+            $stmt=$this->conn->prepare($sql);
+                
+            // substitui os valores na query
+            $stmt->bindValue(':id', $id);
 
-                $sql = 'SELECT * FROM '.self::$table.' WHERE `alert_id` = :id';
-                $stmt = $connPdo->prepare($sql);
-                $stmt->bindValue(':id', $id);
-                $stmt->execute();
-            } catch (PDOException $e) {
-                print "Error!: " . $e->getMessage() . "<br/>";
-                die();
-            }
-            
-
+            // executa a consulta
+            $stmt->execute();
+        
+            // Verifica se a consulta retornou algum registro
             if ($stmt->rowCount() > 0) {
-
-                //DEBUG
-                echo ("<br>RETORNOU ".$stmt->rowCount(). " registros <BR>");
-                $retorno = $stmt->fetch(PDO::FETCH_ASSOC);
-                //$retorno = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                echo ("<br>RETORNO: <BR>");
-                var_dump($retorno);
-                echo ("<br>stmt: <BR>");
-                var_dump($stmt);
-                echo ("<br>json_encode: <BR>");
-                //DEBUG
-
+                // retorna o primeiro registro
                 return $stmt->fetch(PDO::FETCH_ASSOC);
             } else {
                 throw new Exception("Nenhum registro encontrado!");
             }
         }
 
-        public static function selectAll() {
-            try{
-                $connPdo = new PDO(strval(DBDRIVE.':host='.DBHOST.';dbname='.DBNAME),strval(DBUSER), strval(DBPASS));
+        public function selectAll() {
 
-                $sql = 'SELECT * FROM '.self::$table;
-                $stmt = $connPdo->prepare($sql);
-                $stmt->execute();
-            } catch (PDOException $e) {
-                print "Error!: " . $e->getMessage() . "<br/>";
-                die();
-            }
+            $sql = 'SELECT 
+            `id`,  
+            `app_name`,  
+            `title`, 
+            `description`,  
+            `enabled`,  
+            `metric`,  
+            `condition`,  
+            `threshold` 
+            FROM `'
+            . self::$db_name . '`.`' . self::$table . "`" ;
+     
+            //Prepara a query    
+            $stmt=$this->conn->prepare($sql);
 
+            // executa a consulta
+            $stmt->execute();
+
+            // Verifica se a consulta retornou algum registro
             if ($stmt->rowCount() > 0) {
                 return $stmt->fetchAll(PDO::FETCH_ASSOC);
             } else {
@@ -63,22 +86,48 @@
             }
         }
 
-        public static function insert($data)
+        public function insert($data)
         {
-            try {
-                $connPdo = new PDO(strval(DBDRIVE.':host='.DBHOST.';dbname='.DBNAME),strval(DBUSER), strval(DBPASS));
+            // echo "<br/>funcao insert \$data:<br/>";
+            // var_dump($data);
+            // echo "<br/>";
 
-                $sql = 'INSERT INTO '.self::$table.' (email, password, name) VALUES (:em, :pa, :na)';
-                $stmt = $connPdo->prepare($sql);
-                $stmt->bindValue(':em', $data['email']);
-                $stmt->bindValue(':pa', $data['password']);
-                $stmt->bindValue(':na', $data['name']);
-                $stmt->execute();
-            } catch (PDOException $e) {
-                print "Error!: " . $e->getMessage() . "<br/>";
-                die();
-            }
+
+            $ql = 'INSERT INTO 
+            `db_app`.`alerts` 
+            (
+                `id`, 
+                `app_name`, 
+                `title`, 
+                `description`, 
+                `enabled`, 
+                `metric`, 
+                `condition`, 
+                `threshold`
+            )
+            VALUES (DEFAULT,
+                :app_name,
+                :title, 
+                :description, 
+                :enabled, 
+                :metric, 
+                :condition, 
+                :threshold
+            );';
+
+
+            $stmt = $this->conn->prepare($sql);
             
+            $stmt->bindValue(':app_name', $data['app_name']);   
+            $stmt->bindValue(':title', $data['title']);  
+            $stmt->bindValue(':description', $data['description']);  
+            $stmt->bindValue(':enabled', $data['enabled']);  
+            $stmt->bindValue(':metric', $data['metric']);  
+            $stmt->bindValue(':condition', $data['condition']);  
+            $stmt->bindValue(':threshold', $data['threshold']);
+
+            $stmt->execute();
+
             if ($stmt->rowCount() > 0) {
                 return 'Usuário(a) inserido com sucesso!';
             } else {
@@ -87,16 +136,7 @@
         }
 
 
-        public static function insertAlert($data)
-        {
-            $connPdo = new PDO(strval(DBDRIVE.':host='.DBHOST.';dbname='.DBNAME),strval(DBUSER), strval(DBPASS));
-            $sql = 'INSERT INTO '.self::$table.
-                        ' (`alert_id`, `sampletime`, `app_name`, `title`, `description`, `enabled`, `metric`, `condition`, `threshold`) 
-                            VALUES (DEFAULT,now(),:a3, :a4, :a5, :a6, :a7, :a8, :a9)';
-            
-            //INSERT INTO `db_app`.`alerts`  (`alert_id`, `sampletime`, `app_name`, `title`, `description`, `enabled`, `metric`, `condition`, `threshold`)
-            //VALUES (DEFAULT,now(),'ms-system-01','Quantidade de Requisições ','Número de requisições aumentou','1','throughput','<=','1');
-        }
+
 
         public static function deleteAlert($data)
         {
