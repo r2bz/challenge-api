@@ -1,0 +1,105 @@
+version: "3.7"
+services:
+  app:
+    build:
+      args:
+        user: appuser
+        uid: 1001
+      context: "."
+      dockerfile: Dockerfile
+    image: app_challenge
+    container_name: container-app
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - DEBUG=4
+    #working_dir: /var/www/html
+    ports:
+      - "80:80"
+    volumes:
+      #- .:/var/www:cached
+      - .:/var/www
+      #- ./html:/var/www/html
+      #- ./App:/var/www/App
+      #- ./vendor:/var/www/vendor
+      #- ./.docker/php_conf/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+      #- ./.docker/php_conf/php.pdo_mysql.ini:/usr/local/etc/php/conf.d/php.pdo_mysql.ini
+    tty: true
+    stdin_open: true
+    links:
+      - "db"
+    depends_on:
+      - db
+    networks:
+      - app_challenge
+  
+  db:
+    image: mysql:5
+    container_name: container-db
+    restart: always
+    env_file:
+      - .env
+    #apenas para a versão 8 #  command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      #- ./.docker/mysql_data:/var/lib/mysql
+      #- ./.docker/mysql_conf/my.cnf:/etc/mysql/my.cnf
+      - ./.docker/mysql_scripts:/docker-entrypoint-initdb.d
+    networks:
+      - app_challenge
+
+networks:
+  app_challenge:
+    driver: bridge
+
+  #nginx:
+  #  image: nginx:alpine
+  #  container_name: container-nginx
+  #  restart: unless-stopped
+  #  ports:
+  #    - "80:80"
+  #  volumes:
+  #    #- ./.docker/logs/nginx:/var/log/nginx
+  #    #- ./.docker/logs/nginx-access.log:/var/log/nginx/access.log
+  #    - .:/var/www
+  #    - ./.docker/nginx_conf:/etc/nginx/conf.d
+  #  networks:
+  #    - app_challenge
+
+#  phpmyadmin:
+#    image: phpmyadmin/phpmyadmin
+#    container_name: container-phpmyadmin
+#    restart: always
+#    depends_on:
+#      - db
+#    links:
+#      - db:db
+#    ports:
+#      - 8000:80
+#    environment:
+#      MYSQL_USER: ${DB_USERNAME}
+#      MYSQL_PASSWORD: ${DB_PASSWORD}
+#      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+#  #    PMA_HOST: db:3306
+#  #    PMA_USER: ${DB_USERNAME}
+#  #    PMA_PASSWORD: ${DB_PASSWORD}
+#    networks:
+#      - app_challenge
+  
+  #redis:
+  #  image: redis:alpine
+  #  container_name: redis
+  #  volumes:
+  #    - redis-data:/data
+  #  networks:
+  #    - travellist
+
