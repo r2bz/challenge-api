@@ -3,6 +3,7 @@
     //use App\Models\User;
 
     include_once "./App/Models/Alert.php";
+    include_once "./App/Services/Log.php";
 
     /* Objetivos:
      * GET /alert -> Retorna uma lista de alertas
@@ -16,9 +17,12 @@
     class AlertService
     {   
         
+
         public function get($id = null) 
         {   
-
+            // Log de acesso ao endpoint
+            $log = new Log();
+            $log->logGestaoDeAcesso("get(".$id.")","Realizada consulta ao ID: " . $id);
             
             if ($id) {
     
@@ -27,6 +31,7 @@
                  * passando como parametro um id da tabela alert
                  * retorna todos os registros em que o id for igual
                  */
+                
                 return (new Alert())->select($id); 
                 
             } else {
@@ -43,6 +48,8 @@
         // Cria um alerta
         public function post() 
         {
+            $log = new Log();
+            $log->logGestaoDeAcesso("insert(\$_POST)","Tentativa de inserção de alerta");
 
             /* TODO: Utilizar o raw Post data 
              * $data = json_decode(file_get_contents("php://input"));
@@ -56,6 +63,10 @@
         // PATCH api/alert/1/enabled/1 -> Atualiza parcialmente o alerta 1, campo enabled para o valor 1
         public function patch() 
         {   
+            // Log de acesso ao endpoint
+            $log = new Log();
+            $log->logGestaoDeAcesso("patch(\$url)","Tentativa de update na tabela alerts.");
+
             $url = explode('/', $_GET['url']);
             return (new Alert())->patch($url);
         }
@@ -63,7 +74,13 @@
         
         public function delete() 
         {
-                    
+            // Log de acesso ao endpoint
+            $log = new Log();
+            $log->logGestaoDeAcesso("delete(\$url)","Tentativa de delete na tabela alerts.");
+
+
+            $url = explode('/', $_GET['url']);
+            return (new Alert())->delete($url);
 
         }
     }

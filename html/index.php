@@ -28,7 +28,6 @@
 
 
 
-            
             // Remove o primeiro elment do array
             array_shift($url);
             array_shift($url);

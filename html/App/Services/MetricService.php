@@ -10,26 +10,32 @@
         public function get($id = null) 
         {
             if ($id) {
-                return Metric::select($id);
+                return (new Metric())->select($id); 
+                //return Metric::select($id);
             } else {
-                return Metric::selectAll();
+                return (new Metric())->selectAll();
+                //return Metric::selectAll();
             }
         }
 
         public function post() 
         {
             $data = $_POST;
-
-            return Metric::insert($data);
+            return (new Metric())->insert($data);
+            // return Metric::insert($data);
         }
 
-        public function update() 
-        {
-            
+
+        // Atualiza um campo de uma métrica específica
+        public function patch() 
+        {   
+            // Não foi solicitada a implementação
         }
 
+        // Deleta uma métrica
         public function delete() 
         {
-            
+            // Não foi solicitada a implementação
+
         }
     }

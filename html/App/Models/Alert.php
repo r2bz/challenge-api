@@ -48,9 +48,18 @@
 
             // executa a consulta
             $stmt->execute();
-        
+
             // Verifica se a consulta retornou algum registro
             if ($stmt->rowCount() > 0) {
+                // os atributos da instância são atualizados
+                $this->id = $actualValues['id'];
+                $this->app_name = $actualValues['app_name'];
+                $this->title = $actualValues['title'];
+                $this->description = $actualValues['description'];
+                $this->metric = $actualValues['metric'];
+                $this->condition = $actualValues['condition'];
+                $this->threshold = $actualValues['threshold'];
+
                 // retorna o primeiro registro
                 return $stmt->fetch(PDO::FETCH_ASSOC);
             } else {
@@ -97,6 +106,7 @@
              * verificar se existe um par app_name + métrica já existente antes de inserir
              */
             
+
             // Retornar array com os app_names iguais
             // Verificar se algum deles já tem a metric que está sendo inserida
             // Se existir, impedir de inserir e retornar erro
@@ -133,93 +143,177 @@
             }
         }
 
+        
+        /**
+         * Validação do array de insert
+         * Se $data é um array com todos os campos conforme esperado 
+         */
+        public function validation($data)
+        {
+            
+            // if (isset($data)) {
+                # code...
+            // }
 
-        /* Tamnha do array (size=5)
-            0 => string 'api' (length=3)
-            1 => string 'alert' (length=5)
-            2 => string '1' (length=1)
-            3 => string 'enabled' (length=7)
-            4 => string '1' (length=1)
+        }
+
+
+        /* 
+            PATCH /alert/1/enabled/1 -> Atualiza parcialmente o alerta 1, campo enabled para o valor 1
+            0 => string 'api'       - para acessar a api
+            1 => string 'alert'     - para acessar interface com alert
+            2 => string '1'         - id de alert a ser atualizado
+            3 => string 'enabled'   - campo a ser atualizado
+            4 => string '1'         - valor do campo a ser alterado
             */
         public function patch($data)
         {
+
             /* Verificar se o id existe, caso positivo realizar update com os demais registros
              * Realizar primeiro o get($id), depois definir os valores dos atributos da classe 
              * com os valores atuais. 
              */
-            if(isset($data['id']) and ($data['id'] != ""))
-            {
-                $actualValues = $this->select( intval($data['id']) );
+            // verifica se os parmetros passados na url sao para alert e se o id do registro
+            // que deseja ser alterado é numérico
+            
+            if( is_numeric($data[2]) ) {
+                // exemplo de entrada válida:  $data[2] => string '1' 
+                // representa o id da tabela alerts a ser alterado
+                
+                if ( isset($data[3]) ) {
+                    // exemplo de entrada válida:  $data[3] => string 'enabled' 
+                    // representa o campo da tabela a ser alterado
+                    
+                    if( isset($data[4]) ){
+
+                        // exemplo de entrada válida: $data[4] => string '1'
+                        // representa o novo valor a ser alterado
+
+                        // verificar se o id existe na tabela
+                        $actualValues = $this->select( intval($data[2]) );
+                        
+                        // id existe ?
+                        if ( $actualValues ) {
+                            
+                            $this->id = $actualValues['id'];
+                            $this->app_name = $actualValues['app_name'];
+                            $this->title = $actualValues['title'];
+                            $this->description = $actualValues['description'];
+                            $this->enabled = $actualValues['enabled'];
+                            $this->metric = $actualValues['metric'];
+                            $this->condition = $actualValues['condition'];
+                            $this->threshold = $actualValues['threshold'];
+
+                            if($this->enabled == $data[4]){
+                                return array('message' => "Não foi necessário atualizar o valor. Valor fornecido igual ao existente.");
+                            }
+                            
+                        }
+                        else {
+                            throw new Exception("Falha ao atualizar alerta! Id não existe na tabela alert.");
+                        }                        
+
+                        switch ($data[3]) {
+                            
+                            case 'enabled':
+                                
+                                if( is_numeric( $data[4] ) and ( $data[4] == 1 or $data[4] == 0 ) ){
+                                    
+                                    // update do campo enable para o id $data[2] com o valor $data[4])
+                                    
+                                    $sql = 'UPDATE ' . self::$table . ' SET enabled = :en WHERE id = :id';
+                                    
+                                    $stmt = $this->conn->prepare($sql);
+                                    $stmt->bindValue(':id', (int)$data[2]); 
+                                    $stmt->bindValue(':en', (int)$data[4]); 
+                                    
+                                    $stmt->execute();
+
+
+                                    if ($stmt->rowCount() > 0) {
+                                        return 'Alerta atualizado com sucesso!';
+                                    } else {
+                                        throw new Exception("Falha ao atualizar alerta!");
+                                    }
+                                }
+                                else {
+                                    throw new Exception("Falha ao atualizar alerta! Favor informar ou 0 ou 1 para o campo enable.");
+                                }
+
+                                break;
+                            
+                            default:
+                                // Implementado por enquanto apenas enabled
+                                break;
+                        }
+                        
+                    }
+                    else{
+                        throw new Exception("Falha ao atualizar alerta!. Favor informar o novo valor do campo a ser alterado.");
+                    }
+                }
+                else{
+                    throw new Exception("Falha ao atualizar alerta!. Favor informar o campo a ser atualizado.");
+                }
             }
             else{
-                // Retornar erro solitando id
-                throw new Exception("Falha ao atualizar alerta!. Favor informar id");
+                throw new Exception("Falha ao atualizar alerta!. Favor informar o id do alerta a ser atualizado.");
             }
-
-            // Percorrer os valores de $actualValues
-
-
-            // Definir atributos com os valores atuais para posteriormente compará-los
-            // $this->title;
-            // $this->description;
-            // $this->enabled;
-            // $this->metric;
-            // $this->condition;
-            // $this->threshold;
-
-            // Query com todos os campos necessário para update
-            $sql = 'UPDATE 
-            `' . self::$db_name . '`.`' . self::$table . '
-                SET
-                app_name = :app
-                title = :title
-                description = :de
-                enabled = :en
-                metric = :me
-                condition = :cond
-                threshold = :th
-                WHERE id = :id';
-            
-            $stmt = $this->conn->prepare($sql);
-
-            // Apenas os campos informados no update (Diferente de vazio serão atualizados)
-            (isset($data['app_name']) and ($data['app_name'] != "" ) ) ? $this->app_name=$data['app_name']:$this->app_name;
-            
-
-            $stmt->bindValue(':app', $data['app_name']);   
-            $stmt->bindValue(':title', $data['title']);  
-            $stmt->bindValue(':de', $data['description']);  
-            $stmt->bindValue(':en', $data['enabled']);  
-            $stmt->bindValue(':me', $data['metric']);  
-            $stmt->bindValue(':cond', $data['condition']);  
-            $stmt->bindValue(':th', $data['threshold']);
-
-            $stmt->execute();
-
-            if ($stmt->rowCount() > 0) {
-                return 'Alerta atualizado com sucesso!';
-            } else {
-                throw new Exception("Falha ao atualizar alerta!");
-            }
-
-
 
 
         }
 
 
-        // Deleta uma configuração de alerta de acordo com o id informado
+
+        /*
+            Deleta uma configuração de alerta de acordo com o id informado
+            Exemplo:
+            DELETE /alert/1 -> Remove o alerta com id = 1
+
+            Array esperado:
+            0 => string 'api'       - para acessar a api
+            1 => string 'alert'     - para acessar interface com alert
+            2 => string '1'         - id de alert a ser deletado
+        */
         public  function delete($data)
         {
+
+            // verifica se os parmetros passados na url estão em conformidade
             
-            //DELETE FROM `db_app`.`alerts` WHERE  `id`=1;
+            if( is_numeric($data[2]) ) {
+                // exemplo de entrada válida:  $data[2] => string '1' 
+                // representa o id da tabela alerts a ser deletado
+                
+               
+                // verificar se o id existe na tabela
+                $actualValues = $this->select( intval($data[2]) );
+                
+                // id existe ?
+                if ( $actualValues ) {
+                    
+                    //DELETE FROM `db_app`.`alerts` WHERE  `id`=1;
+                    $sql = 'DELETE FROM ' . self::$table . ' WHERE id = :id';
+                            
+                    $stmt = $this->conn->prepare($sql);
+                    $stmt->bindValue(':id', (int)$data[2]); 
+                    
+                    $stmt->execute();
 
-            if ($stmt->rowCount() > 0) {
-                return 'Alerta inserido com sucesso!';
-            } else {
-                throw new Exception("Falha ao inserir alerta!");
+                    if ($stmt->rowCount() > 0) {
+                        return 'Alerta deletado com sucesso!';
+                    } else {
+                        throw new Exception("Falha ao deletar alerta!");
+                    }
+                            
+                }
+                else {
+                    throw new Exception("Falha ao deletar alerta! Id não existe na tabela alert.");
+                }                        
+               
             }
-
+            else{
+                throw new Exception("Falha ao deletar alerta!. Favor informar o id do alerta a ser atualizado.");
+            }
             
         }
     }
