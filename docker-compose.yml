@@ -61,20 +61,6 @@ networks:
   app_challenge:
     driver: bridge
 
-  #nginx:
-  #  image: nginx:alpine
-  #  container_name: container-nginx
-  #  restart: unless-stopped
-  #  ports:
-  #    - "80:80"
-  #  volumes:
-  #    #- ./.docker/logs/nginx:/var/log/nginx
-  #    #- ./.docker/logs/nginx-access.log:/var/log/nginx/access.log
-  #    - .:/var/www
-  #    - ./.docker/nginx_conf:/etc/nginx/conf.d
-  #  networks:
-  #    - app_challenge
-
 #  phpmyadmin:
 #    image: phpmyadmin/phpmyadmin
 #    container_name: container-phpmyadmin
@@ -95,11 +81,3 @@ networks:
 #    networks:
 #      - app_challenge
   
-  #redis:
-  #  image: redis:alpine
-  #  container_name: redis
-  #  volumes:
-  #    - redis-data:/data
-  #  networks:
-  #    - travellist
-

@@ -32,9 +32,16 @@ RUN apt-get update && apt-get install -y \
     unzip 
 
 # PHP extensions
-RUN docker-php-ext-configure pdo_mysql 
-
-RUN docker-php-ext-install \
+RUN docker-php-ext-configure pdo_mysql \
+    && docker-php-ext-install \
+    pdo \
+    pdo_mysql \
+    mbstring \
+    exif \
+    pcntl \
+    bcmath \
+    gd \ 
+    && docker-php-ext-enable \
     pdo \
     pdo_mysql \
     mbstring \
@@ -43,23 +50,7 @@ RUN docker-php-ext-install \
     bcmath \
     gd 
 
-RUN docker-php-ext-enable \
-    pdo \
-    pdo_mysql \
-    mbstring \
-    exif \
-    pcntl \
-    bcmath \
-    gd 
-
-
-## Install Php Redis Extension
-#RUN pecl install -o -f redis \
-#    &&  rm -rf /tmp/pear \
-#    &&  docker-php-ext-enable redis
-#   $
-
-
+# XDEBUG 
 RUN pecl install xdebug \
     && docker-php-ext-enable xdebug
 
