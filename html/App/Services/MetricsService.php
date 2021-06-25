@@ -2,19 +2,19 @@
     //namespace App\Services;
     //use App\Models\Metric;
 
-    require_once "./App/Models/Metric.php";
+    require_once "./App/Models/MetricsReport.php";
 
 
-    class MetricService
+    class MetricsService
     {
         public function get($id = null) 
         {
             if ($id) {
                 return (new Metric())->select($id); 
-                
+                //return Metric::select($id);
             } else {
                 return (new Metric())->selectAll();
-                
+                //return Metric::selectAll();
             }
         }
 
@@ -22,7 +22,7 @@
         {
             $data = $_POST;
             return (new Metric())->insert($data);
-            
+            // return Metric::insert($data);
         }
 
 

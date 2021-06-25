@@ -1,19 +1,19 @@
 <?php
     //namespace App\Services;
-    //use App\Models\Metric;
+    //use App\Models\Health;
 
-    require_once "./App/Models/Metric.php";
+    require_once "./App/Models/Health.php";
 
 
-    class MetricService
+    class HealthService
     {
         public function get($id = null) 
         {
             if ($id) {
-                return (new Metric())->select($id); 
+                return (new Health())->select($id); 
                 
             } else {
-                return (new Metric())->selectAll();
+                return (new Health())->selectAll();
                 
             }
         }
@@ -21,7 +21,7 @@
         public function post() 
         {
             $data = $_POST;
-            return (new Metric())->insert($data);
+            return (new Health())->insert($data);
             
         }
 
