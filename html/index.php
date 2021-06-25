@@ -3,18 +3,50 @@
     // header('Content-Type: application/json');
 
     include_once "App/Services/AlertService.php";
-    include_once "App/Services/MetricService.php";
+    include_once "App/Services/ReceiveService.php";
+    include_once "App/Services/MetricsService.php";
+    include_once "App/Services/HealthService.php";
 
-    /* GET /alert -> Retorna uma lista de alertas
+
+    /** ENDPOINT api/alert
+     *  GET /alert -> Retorna uma lista de alertas
      * GET /alert/1 -> Retorna as configurações do alerta com id = 1
      * POST /alert -> Cria um alerta
-     * PUT /alert/1 -> Atualiza completamente o alerta 1
+     * PUT /alert/1 -> Atualiza completamente o alerta 1 [Não implementado]
      * PATCH /alert/1/enabled -> Atualiza parcialmente o alerta 1, campo enabled
      * DELETE /alert/1 -> Remove o alerta 1
      */
+    
+     /** ENDPOINT api/receive
+     *  GET /receive -> Retorna todas as métricas
+     * GET /receive/1 -> Retorna a métrica com id = 1
+     * POST /receive -> Recebe uma métrica e insere na base
+     * PUT /receive/1 ->            Não implementado
+     * PATCH /receive/1/appName ->  Não implementado
+     * DELETE /receive/1 ->         Não implementado
+     */
 
-    // para a entrada api/alert/1 será formado um vetor com 3 posições após explodir $_GET['url']
+     /** ENDPOINT api/metrics
+      * Report com o resumos sobre métricas e incidentes
+      *  GET /receive -> Retorna todas as métricas
+      * GET /receive/1 -> Retorna a métrica com id = 1
+      * POST /receive -> Recebe uma métrica e insere na base
+      * PUT /receive/1 ->            Não implementado
+      * PATCH /receive/1/appName ->  Não implementado
+      * DELETE /receive/1 ->         Não implementado
+      */
+    
+     /** ENDPOINT api/health
+     *  GET /receive -> Retorna todas as métricas
+     * GET /receive/1 -> Retorna a métrica com id = 1
+     * POST /receive -> Recebe uma métrica e insere na base
+     * PUT /receive/1 ->            Não implementado
+     * PATCH /receive/1/appName ->  Não implementado
+     * DELETE /receive/1 ->         Não implementado
+     */
 
+    
+    // será formado um vetor com 3 posições após explodir $_GET['url']
     if ($_GET['url']) {
         $url = explode('/', $_GET['url']);
 
@@ -26,11 +58,11 @@
 
             $method = strtolower($_SERVER['REQUEST_METHOD']);
 
-
-
-            // Remove o primeiro elment do array
+            // Remove o primeiro elmento do array
             array_shift($url);
+            // Remove o segundo elmento do array
             array_shift($url);
+
             try {
 
                 $response = call_user_func_array(array(new $service, $method), $url);

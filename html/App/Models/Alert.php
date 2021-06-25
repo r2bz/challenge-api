@@ -102,14 +102,12 @@
         // Adiciona um novo alerta à tabela de alertas
         public function insert($data)
         {
-            /* TODO: a insersão só pode ser aceita se $_POST for um json válido
-             * verificar se existe um par app_name + métrica já existente antes de inserir
-             */
-            
 
             // Retornar array com os app_names iguais
             // Verificar se algum deles já tem a metric que está sendo inserida
             // Se existir, impedir de inserir e retornar erro
+            $validation = $this->validation_alert($data);
+
 
             $sql = 'INSERT INTO 
             `' . self::$db_name . '`.`' . self::$table . 
@@ -148,12 +146,70 @@
          * Validação do array de insert
          * Se $data é um array com todos os campos conforme esperado 
          */
-        public function validation($data)
+        public function validation_alert($data)
         {
-            
-            // if (isset($data)) {
-                # code...
-            // }
+            // se não for um json válido retorna null
+            $insert_alert = json_encode($data);
+
+            if ($insert_alert) {
+                // É um json válido
+
+                $validation_array[0] = (is_string($data['app_name'])) ?    $true:$false;
+                $validation_array[1] = (is_string($data['title'])) ?          $true:$false;
+                $validation_array[2] = (is_string($data['description'])) ? $true:$false;
+                $validation_array[3] = (is_bool($data['enabled'])) ?      $true:$false;
+                $validation_array[4] = (is_string($data['metric'])) ?        $true:$false;
+                $validation_array[5] = (is_string($data['condition'])) ?  $true:$false;
+                $validation_array[6] = (is_numeric($data['threshold'])) ?  $true:$false;
+                $validation_array[7] = (in_array($data['condition'], array(">", "<", "=", ">=", "<=")))?$true:$false;
+
+                // Se apenas uma verificação falhar retorna erro
+                if (in_array($false, $validation_array) ) {
+                    throw new Exception("A métrica não foi registrada. Valor inválido de entrada.");
+                }
+
+                /** Verifica se existe um alerta cadastrado (par de appName + metricName) na tabela de alertas
+                * o alerta do par appname+metricname da métrica em foco
+                */
+                $sql =  'SELECT a.id,a.app_name,a.title,a.enabled,a.metric,a.`condition`,a.threshold 
+                    FROM alerts a
+                    WHERE
+                        a.app_name = :app
+                        AND a.metric = :mn ;';
+
+                //Prepara a query    
+                $stmt=$this->conn->prepare($sql);
+                $stmt->bindValue(':app', $data['appName']);
+                $stmt->bindValue(':mn', $data['metricName']);
+
+                // executa a consulta
+                $stmt->execute();
+                
+                /** Se a consulta não encontrar nenhum registro, 
+                 * pode seguir com a inserção do alerta,
+                 * pois não deve existir dois alertas com o mesmo nome
+                 * para o mesmo par appName - metricName
+                 * Nada impede de ter várias métricas para o mesmo appName
+                 */
+                if ($stmt->rowCount() == 0) {
+                    // validar os demais dados
+                    if (is_numeric($data['value']) ) {
+                        return $stmt->fetch(PDO::FETCH_ASSOC);
+                    }
+
+                    throw new Exception("A métrica não foi registrada. Favor informar um valor numérico");
+
+
+                } else {
+                    
+                    throw new Exception("Alerta não registrado! Já existe uma configuração de alerta para o par appName + metricName.");
+                }
+
+
+            }else{
+                // entrada de métrica não é um json válido
+                throw new Exception("Falha ao inserir Alerta! Entrada de alerta não é um json válido.");
+            }
 
         }
 

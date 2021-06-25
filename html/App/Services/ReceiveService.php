@@ -3,16 +3,19 @@
     //use App\Models\Metric;
 
     require_once "./App/Models/Metric.php";
+    require_once "./App/Models/Incident.php";
 
 
-    class MetricService
+    class ReceiveService
     {
         public function get($id = null) 
         {
             if ($id) {
+
                 return (new Metric())->select($id); 
                 
             } else {
+                
                 return (new Metric())->selectAll();
                 
             }
@@ -21,6 +24,7 @@
         public function post() 
         {
             $data = $_POST;
+
             return (new Metric())->insert($data);
             
         }
