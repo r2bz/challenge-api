@@ -94,7 +94,7 @@
             
         }
 
-        // ENDPOINT metricas/
+        // ENDPOINT metrics/
         //
         /**
          * select mais interno retorna apenas os alertas com o mesmo par appname e metricname

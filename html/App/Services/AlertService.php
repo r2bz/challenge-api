@@ -3,7 +3,7 @@
     //use App\Models\User;
 
     include_once "./App/Models/Alert.php";
-    include_once "./Config/Log.php";
+    include_once "../Config/Log.php";
 
     /* Objetivos:
      * GET /alert -> Retorna uma lista de alertas
