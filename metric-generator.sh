@@ -2,7 +2,8 @@
 
 ## URL ENDPOINT DA API PARA RECEBER MÉTRICAS
 # Informar o endereço da sua api em docker para executar este script
-ENDPOINT="http://api:8080/<meu-endpoint-para-metricas>/"
+# ENDPOINT="http://api:8080/<meu-endpoint-para-metricas>/"
+ENDPOINT="http://localhost/api/metric"
 
 ## Curl to API ##
 # DESCRIPTION: Faz uma chamada de API passando as informações de metricas
