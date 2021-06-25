@@ -1,4 +1,6 @@
 <?php
+namespace Api\Config;
+
 //Multiline error log class
 //For break use "\n" instead '\n'
 
@@ -8,7 +10,7 @@
 */
 Class Log {
   
-  public static $log_file =  "./Logs/LogAPI.log";
+  public static $log_file =  "./src/Logs/LogAPI.log";
 
   /** 
   * Função para gravar logs dos endpoints de gestao de alertas

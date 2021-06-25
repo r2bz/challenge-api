@@ -1,9 +1,9 @@
 <?php
-    //namespace App\Services;
-    //use App\Models\User;
+    namespace Api\App\Services;
+    use Api\App\Models\Alert;
+    use Api\Config\Database;
+    use Api\Config\Log;
 
-    include_once "./App/Models/Alert.php";
-    include_once "../Config/Log.php";
 
     /* Objetivos:
      * GET /alert -> Retorna uma lista de alertas

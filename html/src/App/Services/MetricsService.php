@@ -1,8 +1,8 @@
 <?php
-    //namespace App\Services;
-    //use App\Models\Metric;
+    namespace Api\App\Services;
+    use Api\App\Models\Metric;
 
-    require_once "./App/Models/MetricsReport.php";
+    // require_once "./App/Models/MetricsReport.php";
 
     /**
      * Endpoint api/metrics 

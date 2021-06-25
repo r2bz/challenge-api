@@ -1,8 +1,9 @@
 <?php
-    //namespace App\Models;
+    namespace Api\App\Models;
 
-    include_once "../Config/Database.php";
-    include_once "../Config/Log.php";
+    use Api\Config\Database;
+    use Api\Config\Log;
+
 
     class Metric
     {
@@ -20,7 +21,7 @@
         
         public function __construct(){
             
-            // retorna uma conexão da da instância da classe DB
+            // retorna uma conexão da instância da classe DB
             $this->conn = (new Database())->connect();
         }
 
@@ -53,9 +54,9 @@
             if ($stmt->rowCount() > 0) {
  
                 // retorna o primeiro registro
-                return $stmt->fetch(PDO::FETCH_ASSOC);
+                return $stmt->fetch(\PDO::FETCH_ASSOC);
             } else {
-                throw new Exception("Nenhum registro encontrado!");
+                throw new \Exception("Nenhum registro encontrado!");
             }
         }
 
@@ -80,10 +81,10 @@
             // Verifica se a consulta retornou algum registro
             if ($stmt->rowCount() > 0) {
     
-                return $stmt->fetchAll(PDO::FETCH_ASSOC);
+                return $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
             } else {
-                throw new Exception("Nenhum registro encontrado!");
+                throw new \Exception("Nenhum registro encontrado!");
             }
             
         }
@@ -99,11 +100,6 @@
              */
             $valid_alert = $this->validation_metric($data);
 
-            // DEBUG
-            echo "<br/>depois de validation valid_alert: ".$valid_alert ;
-            var_dump($valid_alert);
-            echo "<br/>";
-            // DEBUG
 
 
             // Inserir métrica
@@ -187,7 +183,7 @@
                 return $msg_return;
 
             } else {
-                throw new Exception("Falha ao inserir métrica!");
+                throw new \Exception("Falha ao inserir métrica!");
             }
         }
 
@@ -223,35 +219,32 @@
 
                 // executa a consulta
                 $stmt->execute();
-                // DEBUG
-                echo "<br/>STMT em metric em validation_metric depois do exec. Count: ".$stmt->rowCount() ;
-                echo "<br/>";
-                // DEBUG
+
                 
                 // Verifica se a consulta retornou algum registro
                 if ($stmt->rowCount() > 0) {
                     // validar os demais dados
                     if (is_numeric($data['value']) ) {
-                        return $stmt->fetch(PDO::FETCH_ASSOC);
+                        return $stmt->fetch(\PDO::FETCH_ASSOC);
                     }
 
-                    throw new Exception("A métrica não foi registrada. Favor informar um valor numérico");
+                    throw new \Exception("A métrica não foi registrada. Favor informar um valor numérico");
 
 
                 } else {
-                    $log = new Log();
+                    $log = new \Log();
                     // GERA LOG informando que não existe correspondência de alerta para a métrica
                     $log->logGestaoDeIncidentes(1);
                     // GERA LOG informando que Inserção da métrica não gerou incidente
                     $log->logGestaoDeIncidentes(2);
                     
-                    throw new Exception("Não existe configuração de Alerta para a métrica! A métrica não foi registrada.");
+                    throw new \Exception("Não existe configuração de Alerta para a métrica! A métrica não foi registrada.");
                 }
 
 
             }else{
                 // entrada de métrica não é um json válido
-                throw new Exception("Falha ao inserir métrica! Entrada de métrica não é um json válido.");
+                throw new \Exception("Falha ao inserir métrica! Entrada de métrica não é um json válido.");
             }
 
         }

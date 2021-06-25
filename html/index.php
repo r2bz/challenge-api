@@ -2,10 +2,18 @@
     header('Access-Control-Allow-Origin: *');
     // header('Content-Type: application/json');
 
-    include_once "App/Services/AlertService.php";
-    include_once "App/Services/ReceiveService.php";
-    include_once "App/Services/MetricsService.php";
-    include_once "App/Services/HealthService.php";
+    use Api\App\Services\AlertService;
+    use Api\App\Services\ReceiveService;
+    use Api\App\Services\MetricsService;
+    use Api\App\Services\HealthService;
+    
+
+    // include_once "App/Services/AlertService.php";
+    // include_once "App/Services/ReceiveService.php";
+    // include_once "App/Services/MetricsService.php";
+    // include_once "App/Services/HealthService.php";
+    require_once realpath("vendor/autoload.php");
+
 
 
     /** ENDPOINT api/alert
@@ -53,8 +61,8 @@
         // verifica se a url tem a string /api depois do endereço hospedado
         if ($url[0] === 'api' and sizeof($url)>1 ) {
 
-            //$service = 'App\Services\\'.ucfirst($url[1]).'Service';
-            $service = ucfirst($url[1]).'Service';
+            $service = 'Api\App\Services\\'.ucfirst($url[1]).'Service';
+            // $service = ucfirst($url[1]).'Service';
 
             $method = strtolower($_SERVER['REQUEST_METHOD']);
 
@@ -71,7 +79,7 @@
                 echo json_encode(array('status' => 'sucess', 'data' => $response),JSON_UNESCAPED_UNICODE);
 
                 exit;
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 http_response_code(404);
                 echo json_encode(array('status' => 'error', 'data' => $e->getMessage()), JSON_UNESCAPED_UNICODE);
                 exit;

@@ -1,9 +1,10 @@
 <?php
-    //namespace App\Services;
-    //use App\Models\Metric;
+    namespace Api\App\Services;
+    use Api\App\Models\Metric;
+    use Api\App\Models\Incident;
 
-    require_once "./App/Models/Metric.php";
-    require_once "./App/Models/Incident.php";
+    // require_once "./App/Models/Metric.php";
+    // require_once "./App/Models/Incident.php";
 
 
     class ReceiveService

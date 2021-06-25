@@ -1,7 +1,9 @@
 <?php
-    //namespace App\Models;
+    namespace Api\App\Models;
 
-    include_once "../Config/Database.php";
+    use Api\Config\Database;
+    
+    // include_once "../Config/Database.php";
 
     class Incident
     {
@@ -31,11 +33,6 @@
 
         public function insert($data){
 
-                 // DEBUG
-                 echo "<br/>insert do incident. Data: ".$data ;
-                 //var_dump($_POST);
-                 echo "<br/>";
-                 // DEBUG
             
             $sql = 'INSERT INTO 
             `' . self::$db_name . '`.`' . self::$table . 

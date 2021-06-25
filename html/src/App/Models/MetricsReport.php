@@ -1,4 +1,6 @@
 <?php
+namespace Api\App\Models;
+
 // ENDPOINT metrics/
 //
 /**
@@ -16,7 +18,11 @@
  *      AND a.metric = m.metricName) tb
  *  	WHERE tb.metric = $insert[metricName]
  */
-
+    class MetricsReport 
+    {
+        
+    }
+    
 
  
 ?>

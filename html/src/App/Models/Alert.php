@@ -1,8 +1,8 @@
 <?php
-    //namespace App\Models;
+    namespace Api\App\Models;
 
-    include_once "../Config/Database.php";
-    
+    // include_once "../Config/Database.php";
+    use Api\Config\Database;
 
     class Alert
     {
@@ -61,9 +61,9 @@
                 $this->threshold = $actualValues['threshold'];
 
                 // retorna o primeiro registro
-                return $stmt->fetch(PDO::FETCH_ASSOC);
+                return $stmt->fetch(\PDO::FETCH_ASSOC);
             } else {
-                throw new Exception("Nenhum registro encontrado!");
+                throw new \Exception("Nenhum registro encontrado!");
             }
         }
 
@@ -91,10 +91,10 @@
             // Verifica se a consulta retornou algum registro
             if ($stmt->rowCount() > 0) {
   
-                return $stmt->fetchAll(PDO::FETCH_ASSOC);
+                return $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
             } else {
-                throw new Exception("Nenhum registro encontrado!");
+                throw new \Exception("Nenhum registro encontrado!");
             }
         }
 
@@ -137,7 +137,7 @@
             if ($stmt->rowCount() > 0) {
                 return 'Alerta inserido com sucesso!';
             } else {
-                throw new Exception("Falha ao inserir alerta!");
+                throw new \Exception("Falha ao inserir alerta!");
             }
         }
 
@@ -154,13 +154,13 @@
             if ($insert_alert) {
                 // É um json válido
 
-                $validation_array[0] = (is_string($data['app_name'])) ?    $true:$false;
-                $validation_array[1] = (is_string($data['title'])) ?          $true:$false;
-                $validation_array[2] = (is_string($data['description'])) ? $true:$false;
-                $validation_array[3] = (is_bool($data['enabled'])) ?      $true:$false;
-                $validation_array[4] = (is_string($data['metric'])) ?        $true:$false;
-                $validation_array[5] = (is_string($data['condition'])) ?  $true:$false;
-                $validation_array[6] = (is_numeric($data['threshold'])) ?  $true:$false;
+                $validation_array[0] = (is_string($data['app_name'])) ?    true:false;
+                $validation_array[1] = (is_string($data['title'])) ?          true:false;
+                $validation_array[2] = (is_string($data['description'])) ? true:false;
+                $validation_array[3] = (is_bool($data['enabled'])) ?      true:false;
+                $validation_array[4] = (is_string($data['metric'])) ?        true:false;
+                $validation_array[5] = (is_string($data['condition'])) ?  true:false;
+                $validation_array[6] = (is_numeric($data['threshold'])) ?  true:false;
                 $validation_array[7] = (in_array($data['condition'], array(">", "<", "=", ">=", "<=")))?$true:$false;
 
                 // Se apenas uma verificação falhar retorna erro
@@ -194,21 +194,21 @@
                 if ($stmt->rowCount() == 0) {
                     // validar os demais dados
                     if (is_numeric($data['value']) ) {
-                        return $stmt->fetch(PDO::FETCH_ASSOC);
+                        return $stmt->fetch(\PDO::FETCH_ASSOC);
                     }
 
-                    throw new Exception("A métrica não foi registrada. Favor informar um valor numérico");
+                    throw new \Exception("A métrica não foi registrada. Favor informar um valor numérico");
 
 
                 } else {
                     
-                    throw new Exception("Alerta não registrado! Já existe uma configuração de alerta para o par appName + metricName.");
+                    throw new \Exception("Alerta não registrado! Já existe uma configuração de alerta para o par appName + metricName.");
                 }
 
 
             }else{
                 // entrada de métrica não é um json válido
-                throw new Exception("Falha ao inserir Alerta! Entrada de alerta não é um json válido.");
+                throw new \Exception("Falha ao inserir Alerta! Entrada de alerta não é um json válido.");
             }
 
         }
@@ -266,7 +266,7 @@
                             
                         }
                         else {
-                            throw new Exception("Falha ao atualizar alerta! Id não existe na tabela alert.");
+                            throw new \Exception("Falha ao atualizar alerta! Id não existe na tabela alert.");
                         }                        
 
                         switch ($data[3]) {
@@ -289,11 +289,11 @@
                                     if ($stmt->rowCount() > 0) {
                                         return 'Alerta atualizado com sucesso!';
                                     } else {
-                                        throw new Exception("Falha ao atualizar alerta!");
+                                        throw new \Exception("Falha ao atualizar alerta!");
                                     }
                                 }
                                 else {
-                                    throw new Exception("Falha ao atualizar alerta! Favor informar ou 0 ou 1 para o campo enable.");
+                                    throw new \Exception("Falha ao atualizar alerta! Favor informar ou 0 ou 1 para o campo enable.");
                                 }
 
                                 break;
@@ -305,15 +305,15 @@
                         
                     }
                     else{
-                        throw new Exception("Falha ao atualizar alerta!. Favor informar o novo valor do campo a ser alterado.");
+                        throw new \Exception("Falha ao atualizar alerta!. Favor informar o novo valor do campo a ser alterado.");
                     }
                 }
                 else{
-                    throw new Exception("Falha ao atualizar alerta!. Favor informar o campo a ser atualizado.");
+                    throw new \Exception("Falha ao atualizar alerta!. Favor informar o campo a ser atualizado.");
                 }
             }
             else{
-                throw new Exception("Falha ao atualizar alerta!. Favor informar o id do alerta a ser atualizado.");
+                throw new \Exception("Falha ao atualizar alerta!. Favor informar o id do alerta a ser atualizado.");
             }
 
 
@@ -358,17 +358,17 @@
                     if ($stmt->rowCount() > 0) {
                         return 'Alerta deletado com sucesso!';
                     } else {
-                        throw new Exception("Falha ao deletar alerta!");
+                        throw new \Exception("Falha ao deletar alerta!");
                     }
                             
                 }
                 else {
-                    throw new Exception("Falha ao deletar alerta! Id não existe na tabela alert.");
+                    throw new \Exception("Falha ao deletar alerta! Id não existe na tabela alert.");
                 }                        
                
             }
             else{
-                throw new Exception("Falha ao deletar alerta!. Favor informar o id do alerta a ser atualizado.");
+                throw new \Exception("Falha ao deletar alerta!. Favor informar o id do alerta a ser atualizado.");
             }
             
         }

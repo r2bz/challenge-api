@@ -1,8 +1,8 @@
 <?php
-    //namespace App\Services;
-    //use App\Models\Health;
+    namespace Api\App\Services;
+    use Api\App\Models\Health;
 
-    require_once "./App/Models/Health.php";
+    // require_once "./App/Models/Health.php";
 
 
     class HealthService
