@@ -90,18 +90,20 @@
         }
 
         
-
-        // Adiciona um nova métrica/coleta à tabela de metricas
+        /** Adiciona um nova métrica/coleta à tabela metrics
+         * A insersão só pode ser aceita se $_POST for um json válido 
+         * e se existe um par app_name + métrica na tabela de alertas
+         * continua o fluxo, caso contrário retorna erro.
+         */
         public function insert($data)
         {
-            /** A insersão só pode ser aceita se $_POST for um json válido 
-             * se existe um par app_name + métrica na tabela de alertas
-             * continua o fluxo, caso contrário retorna erro.
-             */
+            
+            // Verifica se a métrica é válida e se está relacionada a algum alerta já cadastrado
+            // se houver, retorna o alerta relacionado
+            $valid_alert = $this->validation_metric($data);
+            
 
-             $valid_alert = $this->validation_metric($data);
-
-
+            $data = json_decode($data);
 
             // Inserir métrica
             $sql = 'INSERT INTO 
@@ -117,12 +119,15 @@
             
             $stmt = $this->conn->prepare($sql);
 
-            $stmt->bindValue(':metricn', $data['metricName']);   
-            $stmt->bindValue(':appn', $data['appName']);  
-            $stmt->bindValue(':val', $data['value']);  
-            
+            $stmt->bindValue(':metricn', $data->metricName);   
+            $stmt->bindValue(':appn', $data->appName);  
+            $stmt->bindValue(':val', $data->value);  
+
+
+
             $stmt->execute();
             
+
             // count rows da inserção da métrica
             $inserted_metric = $stmt->rowCount();
             
@@ -136,21 +141,21 @@
                     
                     switch ($valid_alert['condition']) {
                         case '=':
-                            $generate_incident = ($data['value'] == $valid_alert['threshold'])?true:false;
+                            $generate_incident = ($data->value == $valid_alert['threshold'])?true:false;
                             break;
 
                         case '>=':
-                            $generate_incident = ($data['value'] >= $valid_alert['threshold'])?true:false; 
+                            $generate_incident = ($data->value >= $valid_alert['threshold'])?true:false; 
                             break;
                         
                         case '<=':
-                            $generate_incident = ($data['value'] <= $valid_alert['threshold'])?true:false; 
+                            $generate_incident = ($data->value <= $valid_alert['threshold'])?true:false; 
                             break;
                         case '>':
-                            $generate_incident = ($data['value'] > $valid_alert['threshold'])?true:false; 
+                            $generate_incident = ($data->value > $valid_alert['threshold'])?true:false; 
                             break;
                         case '<':
-                            $generate_incident = ($data['value'] > $valid_alert['threshold'])?true:false; 
+                            $generate_incident = ($data->value > $valid_alert['threshold'])?true:false; 
                             break;
                         default:
                             // $generate_incident = $false;
@@ -187,7 +192,12 @@
             }
         }
 
-        
+        // Verifica se é um json válido
+        public function isJSON($string){
+            return is_string($string) && is_array(json_decode($string, true)) && (json_last_error() == JSON_ERROR_NONE) ? true : false;
+        }
+
+
         /**
          * Validação do array de insert
          * @param Array $data é um array com todos os campos conforme esperado 
@@ -196,56 +206,61 @@
          */
         public function validation_metric($data)
         {
-        
-            // se não for um json válido retorna null
-            $insert_metric = json_encode($data);
-
-            if ($insert_metric) {
-                // É um json válido
-
-                /** Verifica se existe um alerta cadastrado (par de appName + metricName) na tabela de alertas
-                * o alerta do par appname+metricname da métrica em foco
-                */
-                $sql =  'SELECT a.id,a.app_name,a.title,a.enabled,a.metric,a.`condition`,a.threshold 
-                    FROM alerts a
-                    WHERE
-                        a.app_name = :app
-                        AND a.metric = :mn ;';
-
-                //Prepara a query    
-                $stmt=$this->conn->prepare($sql);
-                $stmt->bindValue(':app', $data['appName']);
-                $stmt->bindValue(':mn', $data['metricName']);
-
-                // executa a consulta
-                $stmt->execute();
-
-                
-                // Verifica se existe um alerta cadastrado (par de appName + metricName) na tabela de alertas
-                if ($stmt->rowCount() > 0) {
-                    // validar os demais dados
-                    if (is_numeric($data['value']) ) {
-                        return $stmt->fetch(\PDO::FETCH_ASSOC);
-                    }
-
-                    throw new \Exception("A métrica não foi registrada. Favor informar um valor numérico");
-
-
-                } else {
-                    $log = new Log();
-                    // 1 - GERA LOG 'Inserção da métrica não gerou incidente. - Não existe correspondência de um alerta para a métrica de entrada.'
-                    $log->logGestaoDeIncidentes(1);
-                    
-                    //
-                    $log->logGestaoDeIncidentes($data);
-                    throw new \Exception("Não existe configuração de Alerta para a métrica! A métrica não foi registrada.");
-                }
-
-
-            }else{
+            //$data = file_get_contents("php://input")
+            // se não for um json válido retorna uma exceção
+            if (!$this->isJSON($data)) {
                 // entrada de métrica não é um json válido
                 throw new \Exception("Falha ao inserir métrica! Entrada de métrica não é um json válido.");
             }
+
+            // json_decode transforma a string json em um objeto
+            $insert_metric = json_decode($data);
+
+
+            // É um json válido
+
+            /** Verifica se existe um alerta cadastrado (par de appName + metricName) na tabela de alertas
+            * o alerta do par appname+metricname da métrica em foco
+            */
+            $sql =  'SELECT a.id,a.app_name,a.title,a.enabled,a.metric,a.`condition`,a.threshold 
+                FROM alerts a
+                WHERE
+                    a.app_name = :app
+                    AND a.metric = :mn ;';
+
+            //Prepara a query    
+            $stmt=$this->conn->prepare($sql);
+            $stmt->bindValue(':app', $insert_metric->appName);
+            $stmt->bindValue(':mn', $insert_metric->metricName);
+
+
+            // executa a consulta
+            $stmt->execute();
+
+            
+            // Verifica se existe um alerta cadastrado (par de appName + metricName) na tabela de alertas
+            if ($stmt->rowCount() > 0) {
+                // validar os demais dados
+                if (is_numeric($insert_metric->value) ) {
+
+                    // retorna um alerta cadastrado/relacionado com a metrica a ser inserida (par de appName + metricName)
+                    return $stmt->fetch(\PDO::FETCH_ASSOC);
+                }
+
+                throw new \Exception("A métrica não foi registrada. Favor informar um valor numérico");
+
+
+            } else {
+                $log = new Log();
+                // 1 - GERA LOG 'Inserção da métrica não gerou incidente. - Não existe correspondência de um alerta para a métrica de entrada.'
+                $log->logGestaoDeIncidentes(1);
+                
+                //
+                $log->logGestaoDeIncidentes($data);
+                throw new \Exception("Não existe configuração de Alerta para a métrica! A métrica não foi registrada.");
+            }
+
+
 
         }
 

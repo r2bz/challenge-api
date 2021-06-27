@@ -35,17 +35,17 @@
          ** Esta função retorna a 
          * quantidade de registros da tabela de incidentes, agregado pelo nome da propria métrica
          */
-        public function incident_by_metric() {
+        public function report_incident_by_metric() {
 
             $sql = 'SELECT  
                 a.metric, 
                 i.alert_id, 
                 COUNT(*)
-                FROM ' 
-                . self::$db_name . '.' . self::$tb_incidents . ' i
-                INNER JOIN ' . $self::$db_name . '.' . self::$tb_alerts . ' a 
+                FROM ' . self::$db_name . '.' . self::$tb_incidents . ' i 
+                INNER JOIN ' . self::$db_name . '.' . self::$tb_alerts . ' a 
                     ON i.alert_id = a.id
-                GROUP BY a.metric, i.alert_id';
+                GROUP BY a.metric, i.alert_id 
+                ORDER BY i.alert_id';
                    
             //Prepara a query    
             $stmt = $this->conn->prepare($sql);
@@ -62,7 +62,27 @@
             }
         }
 
-        public function alert_enabled(){
+        /**
+         * Retorna a quantidade de alertas habilitados e desabilitados 
+         */
+        public function report_alert_enabled(){
+
+
+            // SELECT enabled, COUNT(*) 
+            // FROM alerts
+            // GROUP BY enabled
+            // ORDER BY enabled desc;
+        }
+
+        /**
+         * 
+         */
+        public function report_incident_by_app_name(){
+            // SELECT  a.app_name, a.enabled, COUNT(*)  FROM `db_app`.`incidents` i
+            // INNER JOIN alerts a 
+            // ON i.alert_id = a.id
+            // GROUP BY a.app_name, a.enabled
+            // ORDER BY a.app_name
 
         }
 
@@ -76,7 +96,7 @@
             // quantidade de registros da tabela de incidentes, agregado pelo nome da propria métrica
             list_array( $this->incidents_by_metric() );
 
-            list_array($this->alert_enabled());
+            list_array( $this->alert_enabled() );
         }
         
     }

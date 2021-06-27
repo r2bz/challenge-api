@@ -24,11 +24,24 @@
 
         public function post() 
         {
-            $data = $_POST;
+            // Forma antiga
+            // $data = $_POST;
+
+            // Exemplo de json esperado
+            // {"metricName":"response_time","appName":"ms-system-01","value":"2"}
+
+            
+
+            // Obtando dados brutos postados
+            $data = file_get_contents("php://input");
+
 
             return (new Metric())->insert($data);
             
         }
+
+
+
 
 
         // Atualiza um campo de uma métrica específica
@@ -43,4 +56,6 @@
             // Não foi solicitada a implementação
 
         }
+
+
     }

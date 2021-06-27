@@ -1,6 +1,6 @@
 <?php
     namespace Api\App\Services;
-    use Api\App\Models\Metric;
+    use Api\App\Models\MetricsReport;
 
     // require_once "./App/Models/MetricsReport.php";
 
@@ -17,10 +17,10 @@
         public function get($id = null) 
         {
             if ($id) {
-                return (new Metric())->select($id); 
+                return (new MetricsReport())->select($id); 
                 //return Metric::select($id);
             } else {
-                return (new Metric())->selectAll();
+                return (new MetricsReport())->incident_by_metric();
                 //return Metric::selectAll();
             }
         }
