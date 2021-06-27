@@ -26,7 +26,7 @@ Class Log {
 
     //abre o arquivo adicionando linha ao final
     try {
-      $file = fopen(self::$log_file,'a'); 
+      $file = fopen( self::$log_file,'a'); 
     
     } catch (\Throwable $th) {
       throw new Exception('Não foi possível criar o arquivo.'. $th->getMessage());
@@ -76,10 +76,10 @@ Class Log {
   */
     //abre o arquivo adicionando linha ao final
     try {
-      $file = fopen(self::$log_file_gest_incidentes,'a'); 
+      $file = fopen( self::$log_file,'a'); 
     
     } catch (\Throwable $th) {
-      throw new Exception('Não foi possível acessar o arquivo de log.'. $th->getMessage());
+      throw new \Exception('Não foi possível acessar o arquivo de log.'. $th->getMessage());
     }
     
     switch ($arg) {
@@ -111,16 +111,15 @@ Class Log {
             'msg' => 'Inserção da métrica não gerou incidente. '
             ];
           break;
-      
+
       // Mensagem personalizada
       default:    
-      $log = [
-        'date' => strval(date('Y-m-d h:i:s')),
-        'method' => $_SERVER['REQUEST_METHOD'],
-        'url' => $_GET['url'],
-        'msg' => $arg
-        ];
-
+        $log = [
+          'date' => strval(date('Y-m-d h:i:s')),
+          'method' => $_SERVER['REQUEST_METHOD'],
+          'url' => $_GET['url'],
+          'msg' => "metricName=>" . $arg['metricName'] . ",appName=>" . $arg['appName'] . ",value=>" . $arg['value']."-"
+          ];
         break;
     }
 

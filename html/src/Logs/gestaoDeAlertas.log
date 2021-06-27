@@ -1,8 +1,0 @@
-{"date":"24.06.2021 02:49:01","msg":"definida dinamicamente","method":"01","url":"\/api\/alert\/1"}{"date":"24.06.2021 03:28:00","method":"GET","url":"api\/alert\/1","fuctioncalled":"get($id)","msg":"Realizada consulta ao ID: 1"}
-{"date":"24.06.2021 03:28:15","method":"GET","url":"api\/alert\/3","fuctioncalled":"get($id)","msg":"Realizada consulta ao ID: 3"}
-{"date":"24.06.2021 04:20:50","method":"GET","url":"api\/alert\/4","fuctioncalled":"get($id)","msg":"Realizada consulta ao ID: 4"}
-{"date":"2021-06-24 05:17:57","method":"GET","url":"api\/alert\/4","fuctioncalled":"get(4)","msg":"Realizada consulta ao ID: 4"}
-{"date":"2021-06-24 05:18:07","method":"GET","url":"api\/alert","fuctioncalled":"get()","msg":"Realizada consulta ao ID: "}
-{"date":"2021-06-24 05:19:40","method":"GET","url":"api\/alert","fuctioncalled":"get()","msg":"Realizada consulta ao ID: "}
-{"date":"2021-06-24 05:19:56","method":"GET","url":"api\/alert\/1","fuctioncalled":"get(1)","msg":"Realizada consulta ao ID: 1"}
-{"date":"2021-06-24 05:20:04","method":"GET","url":"api\/alert\/5","fuctioncalled":"get(5)","msg":"Realizada consulta ao ID: 5"}

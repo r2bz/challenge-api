@@ -13,18 +13,21 @@ services:
     env_file:
       - .env
     environment:
+      - TZ=America/Fortaleza
       - DEBUG=4
     #working_dir: /var/www/html
+    # command:
+    #   - metric-generator.sh
     ports:
       - "80:80"
     volumes:
       - .:/var/www
-      #- .:/var/www:cached
-      #- ./html:/var/www/html
-      #- ./App:/var/www/App
-      #- ./vendor:/var/www/vendor
-      #- ./.docker/php_conf/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
-      #- ./.docker/php_conf/php.pdo_mysql.ini:/usr/local/etc/php/conf.d/php.pdo_mysql.ini
+    #   - .:/var/www:cached
+    #   - ./html:/var/www/html
+    #   - ./App:/var/www/App
+    #   - ./vendor:/var/www/vendor
+    #   - ./.docker/php_conf/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+    #   - ./.docker/php_conf/php.pdo_mysql.ini:/usr/local/etc/php/conf.d/php.pdo_mysql.ini
     tty: true
     stdin_open: true
     links:
@@ -44,6 +47,7 @@ services:
     ports:
       - "3306:3306"
     environment:
+      TZ: "America/Fortaleza"
       MYSQL_DATABASE: ${DB_DATABASE}
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_PASSWORD: ${DB_PASSWORD}
@@ -51,15 +55,38 @@ services:
       SERVICE_TAGS: dev
       SERVICE_NAME: mysql
     volumes:
+      - ./.docker/mysql_scripts/:/docker-entrypoint-initdb.d/
       #- ./.docker/mysql_data:/var/lib/mysql
       #- ./.docker/mysql_conf/my.cnf:/etc/mysql/my.cnf
-      - ./.docker/mysql_scripts:/docker-entrypoint-initdb.d
     networks:
       - app_challenge
+
+
+  # generator:
+  #   image: ubuntu:latest
+  #   container_name: container-gen
+  #   restart: always
+  #   tty: true
+  #   stdin_open: true
+  #   # environment:
+  #   #   - TZ=America/Fortaleza
+  #   volumes:
+  #     - ./sender:/usr/local/share
+  #   links:
+  #     - app
+  #   depends_on:
+  #     - app
+  #   networks:
+  #     - app_challenge
+  #   # command:
+  #   #   metric-generator.sh
 
 networks:
   app_challenge:
     driver: bridge
+
+
+
 
 #  phpmyadmin:
 #    image: phpmyadmin/phpmyadmin

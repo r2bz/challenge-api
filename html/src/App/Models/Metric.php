@@ -98,7 +98,8 @@
              * se existe um par app_name + métrica na tabela de alertas
              * continua o fluxo, caso contrário retorna erro.
              */
-            $valid_alert = $this->validation_metric($data);
+
+             $valid_alert = $this->validation_metric($data);
 
 
 
@@ -170,7 +171,6 @@
 
                 }else {
                     // Alerta existe, mas está desabilitado
-                    
                     // GERA LOG informando que Inserção da métrica não gerou incidente
                     $log = new Log();
                     $log->logGestaoDeIncidentes(2);
@@ -221,7 +221,7 @@
                 $stmt->execute();
 
                 
-                // Verifica se a consulta retornou algum registro
+                // Verifica se existe um alerta cadastrado (par de appName + metricName) na tabela de alertas
                 if ($stmt->rowCount() > 0) {
                     // validar os demais dados
                     if (is_numeric($data['value']) ) {
@@ -232,12 +232,12 @@
 
 
                 } else {
-                    $log = new \Log();
-                    // GERA LOG informando que não existe correspondência de alerta para a métrica
+                    $log = new Log();
+                    // 1 - GERA LOG 'Inserção da métrica não gerou incidente. - Não existe correspondência de um alerta para a métrica de entrada.'
                     $log->logGestaoDeIncidentes(1);
-                    // GERA LOG informando que Inserção da métrica não gerou incidente
-                    $log->logGestaoDeIncidentes(2);
                     
+                    //
+                    $log->logGestaoDeIncidentes($data);
                     throw new \Exception("Não existe configuração de Alerta para a métrica! A métrica não foi registrada.");
                 }
 
