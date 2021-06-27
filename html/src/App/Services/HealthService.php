@@ -9,20 +9,14 @@
     {
         public function get($id = null) 
         {
-            if ($id) {
-                return (new Health())->select($id); 
-                
-            } else {
+            
                 return (new Health())->selectAll();
-                
-            }
+            
         }
 
         public function post() 
         {
-            $data = $_POST;
-            return (new Health())->insert($data);
-            
+
         }
 
 

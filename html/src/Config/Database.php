@@ -29,5 +29,21 @@
 
       return $this->conn;
     }
+
+    
+    public function get_health_mysql(){
+      try {
+          $connection = new \PDO('mysql:host=' . $this->host . ';dbname=' . $this->db_name, $this->username, $this->password);
+          $connection->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+      
+      }catch(\PDOException $e)
+      {
+        return json_encode(array('status' => 'error', 'data' => "MySQL Indisponível. ". $e->getMessage()),JSON_UNESCAPED_UNICODE) ;
+
+      }
+      return json_encode(array('status' => 'sucess', 'data' => "MySQL Disponível."),JSON_UNESCAPED_UNICODE);
+     
+    }
+
   }
   ?>
