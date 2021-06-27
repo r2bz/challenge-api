@@ -3,8 +3,6 @@
     use Api\App\Models\Metric;
     use Api\App\Models\Incident;
 
-    // require_once "./App/Models/Metric.php";
-    // require_once "./App/Models/Incident.php";
 
 
     class ReceiveService
@@ -24,13 +22,10 @@
 
         public function post() 
         {
-            // Forma antiga
-            // $data = $_POST;
 
             // Exemplo de json esperado
             // {"metricName":"response_time","appName":"ms-system-01","value":"2"}
-
-            
+           
 
             // Obtando dados brutos postados
             $data = file_get_contents("php://input");
