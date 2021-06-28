@@ -1,6 +1,6 @@
 # Challenge API
 
-## Esta API simula uma ferramenta básica de receção de alertas e geração de incidentes
+## Esta API simula uma ferramenta básica de recepção de alertas e geração de incidentes
 
 Descrição: Trata-se de uma **API REST** que será responsável por realizar as seguintes funcionalidades:
 
@@ -22,7 +22,7 @@ Serão inciados:
 - um container com a base em mysql 5 [utiliza a porta 3306]
 - um container que simula uma aplicação enviando métricas para a API
 
-Fique a vontade para trocar as portas utilizadas. Lembre-se de alterar o script metrics-generator.sh disponível na raíz do projeto
+Fique a vontade para trocar as portas utilizadas. Lembre-se de alterar o script metric-generator.sh disponível na raíz do projeto
 
 
 ### A API é composta basicamente de quatro endpoints
@@ -44,6 +44,7 @@ Em que:
 <subfunction> -> Caso a função acessada disponibilize, subfunção da opção acessada.
 
 
+#### alert
 Para o primeiro endpoint api/alert foram implementados as seguintes formas de interação com a API:
 
 GET http://<domain>/api/alert -> Retorna uma lista com as configurações de todos os alertas
@@ -61,34 +62,27 @@ http://localhost/api/alert para listar todos os alertas
 
 
 
-ENDPOINT api/receive
-GET /receive -> Retorna todas as métricas
-GET /receive/1 -> Retorna a métrica com id = 1
-POST /receive -> Recebe uma métrica e insere na base
-PUT /receive/1 ->            Não implementado
-PATCH /receive/1/appName ->  Não implementado
-DELETE /receive/1 ->         Não implementado
 
+#### receive
+Endpoint api/alert foram implementados as seguintes formas de interação com a API:
+
+GET http://<domain>/api/receive -> Retorna todas as métricas
+GET http://<domain>/api/receive/<id> -> Retorna as configurações dE métrica com id = <id>
+POST http://<domain>/api/receive -> Cria um alerta. O input precisa ser em JSON. Segue abaixo exemplo de entrada de alerta.
+- *Exemplo de json esperado:*
+    {"metricName":"response_time","appName":"ms-system-01","value":"2"}
+
+
+
+#### metrics
 ENDPOINT api/metrics
-Report com o resumos sobre métricas e incidentes
-GET /receive -> Retorna todas as métricas
-GET /receive/1 -> Retorna a métrica com id = 1
-POST /receive -> Recebe uma métrica e insere na base
-PUT /receive/1 ->            Não implementado
-PATCH /receive/1/appName ->  Não implementado
-DELETE /receive/1 ->         Não implementado
+Report com os resumos sobre métricas e incidentes
+GET /metrics -> Retorna todas as métricas
 
 
+#### health
 ENDPOINT api/health
-GET /receive -> Retorna todas as métricas
-GET /receive/1 -> Retorna a métrica com id = 1
-POST /receive -> Recebe uma métrica e insere na base
-PUT /receive/1 ->            Não implementado
-PATCH /receive/1/appName ->  Não implementado
-DELETE /receive/1 ->         Não implementado
-
-
-
+GET /health -> Retorna todas as métricas
 
 
 
