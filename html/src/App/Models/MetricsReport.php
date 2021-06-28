@@ -174,7 +174,7 @@
             $tb_th=$array[0]['metric'];
             echo "<br/><br/># ". $tb_th;
             foreach ($array as $key => $row_query) {
-                echo "<br/>".$key." - ". $array[$key]['metric']."{alert_id=". $array[$key]['alert_id']."} ".$array[$key]['count'];
+                echo "<br/>".$array[$key]['metric']."{alert_id=". $array[$key]['alert_id']."} ".$array[$key]['count'];
                 if ($tb_th != $array[($key+1)]['metric']) {
                     $tb_th = $array[($key+1)]['metric'];
                     if ($array[($key+1)]['metric'] != null ) {

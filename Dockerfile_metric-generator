@@ -1,0 +1,23 @@
+FROM ubuntu:latest
+
+
+
+## Copy directories of app from local dir
+COPY ./sender/metric-generator.sh /usr/local/bin/metric-generator.sh
+
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    iputils-ping \
+    nano \
+# Clear cache
+    && apt-get clean && rm -r /var/lib/apt/lists/*
+
+# Set working directory
+#WORKDIR /var/www
+
+#USER $user
+
+
+#CMD metric-generator.sh

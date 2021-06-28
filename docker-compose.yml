@@ -16,8 +16,6 @@ services:
       - TZ=America/Fortaleza
       - DEBUG=4
     #working_dir: /var/www/html
-    # command:
-    #   - metric-generator.sh
     ports:
       - "80:80"
     volumes:
@@ -62,24 +60,29 @@ services:
       - app_challenge
 
 
-  # generator:
-  #   image: ubuntu:latest
-  #   container_name: container-gen
-  #   restart: always
-  #   tty: true
-  #   stdin_open: true
-  #   # environment:
-  #   #   - TZ=America/Fortaleza
-  #   volumes:
-  #     - ./sender:/usr/local/share
-  #   links:
-  #     - app
-  #   depends_on:
-  #     - app
-  #   networks:
-  #     - app_challenge
-  #   # command:
-  #   #   metric-generator.sh
+
+  generator:
+    build:
+      context: "."
+      dockerfile: Dockerfile_metric-generator
+    container_name: container-gen
+    restart: always
+    tty: true
+    stdin_open: true
+    environment:
+      - TZ=America/Fortaleza
+    # volumes:
+    #   - ./sender:/usr/local/share
+    command:
+      - metric-generator.sh
+    links:
+      - app
+    depends_on:
+      - app
+    networks:
+      - app_challenge
+    # command:
+    #   metric-generator.sh
 
 networks:
   app_challenge:

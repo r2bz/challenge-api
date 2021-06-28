@@ -8,10 +8,6 @@
     use Api\App\Services\HealthService;
     
 
-    // include_once "App/Services/AlertService.php";
-    // include_once "App/Services/ReceiveService.php";
-    // include_once "App/Services/MetricsService.php";
-    // include_once "App/Services/HealthService.php";
     require_once realpath("vendor/autoload.php");
 
 
