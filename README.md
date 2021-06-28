@@ -55,12 +55,10 @@ PATCH http://<domain>/api/alert/<id>/enabled -> Atualiza parcialmente o alerta 1
 DELETE http://<domain>/api/alert/<id> -> Remove o alerta em que o ID = <id>
 
 
-Exemplo de uso:
+- ***Exemplo de uso:***
 Através do método GET ou através de um browser digite a url em que a aplicação está hospedada
 Caso a aplicação esteja executando localmente
 http://localhost/api/alert para listar todos os alertas
-
-
 
 
 #### receive
@@ -73,8 +71,12 @@ POST http://<domain>/api/receive -> Cria um alerta. O input precisa ser em JSON.
     {"metricName":"response_time","appName":"ms-system-01","value":"2"}
 
 
-
 #### metrics
+ * Endpoint para Resumos sobre incidentes e alertas
+ * Este endpoint exibirá
+ * quantidade de registros da tabela de incidentes, agregado pelo nome da propria métrica
+ * quantidade de alertas habilitados e desabilitados 
+ * quantidade de incidentes gerados agrupados por APP_NAME
 ENDPOINT api/metrics
 Report com os resumos sobre métricas e incidentes
 GET /metrics -> Retorna todas as métricas
@@ -83,8 +85,6 @@ GET /metrics -> Retorna todas as métricas
 #### health
 ENDPOINT api/health
 GET /health -> Retorna todas as métricas
-
-
 
 
 
